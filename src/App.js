@@ -10,6 +10,7 @@ import SendMoneyTransactions from './components/SendMoneyTransactions';
 import MyAccount from './components/MyAccount';
 
 import { UserProvider } from './UserContext';
+import Navbar from './components/Navbar';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Router>
           <Routes>
             <Route path='/' element={<SignInOutContainer/>}/>
+            <Route path='/nav' element={<Navbar/>}/>
             <Route path='/myaccount' element={<MyAccount/>}/>
             <Route path='/sendtrans' element={<SendMoneyTransactions/>}/>
             <Route path='/send' element={<SendMoney/>}/>

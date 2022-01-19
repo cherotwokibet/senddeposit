@@ -35,7 +35,7 @@ function Login ({ handleChange }) {
         logInWithEmailAndPassword(values.username,values.password);
         
         if(user) {
-            navigate('/myaccount')
+            navigate('/nav')
         } else {
             swal('Incorrect password/email')
         } 

@@ -73,7 +73,7 @@ const Signup = () => {
         registerWithEmailAndPassword(values.name, values.email, values.password)
             // .then(navigate('myaccount'));
 
-        if (user) navigate("/myaccount");
+        if (user) navigate("/nav");
 
         console.log(userData)
         // console.log(props)
