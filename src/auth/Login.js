@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Grid,Paper, Avatar, TextField, Button, Typography, Link } from '@mui/material'
 import { LockOutlined as LockOutlinedIcon} from '@mui/icons-material';
 import {FormControlLabel} from '@mui/material';
@@ -9,6 +9,7 @@ import * as Yup from 'yup'
 import { auth, logInWithEmailAndPassword } from "../firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
+import swal from 'sweetalert';
 
 function Login ({ handleChange }) {
 
@@ -29,10 +30,15 @@ function Login ({ handleChange }) {
     const navigate = useNavigate();
 
     const onSubmit = (values, props) => {
-        
+
+
         logInWithEmailAndPassword(values.username,values.password);
         
-        if(user) navigate('/myaccount')
+        if(user) {
+            navigate('/myaccount')
+        } else {
+            swal('Incorrect password/email')
+        } 
 
         // console.log(values.password)
         setTimeout(() => {
@@ -80,11 +86,7 @@ function Login ({ handleChange }) {
                         </Form>
                     )}
                 </Formik>
-                <Typography >
-                    <Link href="#" >
-                        Forgot password ?
-                </Link>
-                </Typography>
+                
                 <Typography > Do you have an account ?
                      <Link href="#" onClick={() => handleChange("event", 1)} >
                         Sign Up

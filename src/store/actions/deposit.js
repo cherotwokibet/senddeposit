@@ -3,6 +3,7 @@ import axios from '../../axios-base';
 import * as actionTypes from './actionTypes';
 
 export const addDepositTransaction = (mpesa) => {
+    console.log(mpesa)
     return {
         type:actionTypes.ADD_DEPOSIT_TRANSACTION,
         mpesa
@@ -31,20 +32,23 @@ export const fetchDepositTransactionsFailed = (error) =>{
 
 
 export const deposit = (userData) => {
-    return dispatch => {
+    // console.log(userData)
         axios.post('/deposittransactions',userData)
             .then(res => {
-                dispatch(addDepositTransaction(res.data))
+                console.log(res.data);
+                addDepositTransaction(res.data)
             }).catch(err => {
-                dispatch(addDepositTransactionFailed(err))
+                addDepositTransactionFailed(err)
             });
-    }
+        
+    
 }
 
 export const fetchDeposit = () => {
     return dispatch => {
         axios.get('/deposittransactions')
             .then(res => {
+                console.log(res.data);
                 dispatch(fetchDepositTransactions(res.data))
             }).catch(err => {
                 dispatch(fetchDepositTransactionsFailed(err))

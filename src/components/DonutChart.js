@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './comp.css'
 
 
 export default function DonutChart({percentage, fillColorBackground = '#EAEAEE', fillColor = '#FFB428' }) {

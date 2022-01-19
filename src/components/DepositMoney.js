@@ -1,18 +1,22 @@
-import React,{useState} from 'react'
+import React,{useContext, useState} from 'react'
 // import PropTypes from 'prop-types'
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 // import {useSelector,useDispatch} from 'react-redux';
 import swal from 'sweetalert'
-import {connect} from 'react-redux'
-import './comp.css'
+import { useNavigate } from "react-router-dom";
+// import {connect} from 'react-redux'
+import axios from '../axios-base';
 
-import * as actions from '../store/actions/index';
+// import * as actions from '../store/actions/index';
+import { UserContext } from '../UserContext';
 
 
 function DepositMoney(props) {
+    const user = useContext(UserContext);
 
     const [error,setError] = useState(false);
+    const navigate = useNavigate();
 
     const MyTextInput = ({ label, ...props }) => {
         //We can use field meta to show an error message if 
@@ -47,7 +51,7 @@ function DepositMoney(props) {
                     // console.log(values);
                     const amount = values.amount;
 
-                    console.log(amount);
+                    // console.log(amount);
 
                     if(amount > Number.MAX_SAFE_INTEGER) {
                         setError(true);
@@ -55,7 +59,14 @@ function DepositMoney(props) {
                     }
 
                     //dispatch to the store
-                    props.depositMpesa(values);
+                    user.deposit(values);
+                    axios.post('/deposittransactions',values)
+                        .then(res => {
+                            console.log(res.data);
+                        }).catch(err => {
+                            console.log(err)
+                        });
+                    // user.deposit(values);
 
                     setTimeout(() => {
                         // console.log(JSON.stringify(values, null, 2));
@@ -73,19 +84,22 @@ function DepositMoney(props) {
                     />
 
 
-                    <button type="submit">Submit</button>
+                    <button type="submit" >Submit</button>
                 </Form>
             </Formik>
+            <button type='button' onClick={()=>navigate('/depotrans')}>View Transactions</button>
         </section>
     )
 }
 
 
-const mapDispatchToProps = dispatch => {
-    return {
-        depositMpesa: (formData) => dispatch(actions.deposit(formData))
-    }
-}
+// const mapDispatchToProps = dispatch => {
+//     return {
+//         depositMpesa: (formData) => dispatch(actions.deposit(formData))
+//     }
+// }
 
 
-export default connect(null,mapDispatchToProps)(DepositMoney)
+// export default connect(null,mapDispatchToProps)(DepositMoney)
+
+export default DepositMoney;

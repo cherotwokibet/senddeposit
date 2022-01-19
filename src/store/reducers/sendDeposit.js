@@ -1,12 +1,12 @@
 import * as actionTypes from '../actions/actionTypes';
 import {updateObject} from '../utility';
 
-const initialState = {
-    grossMoney:50000,
-    netMoney:0,
-    totalSent:0,
-    transactions:[]
-}
+// const initialState = {
+//     grossMoney:50000,
+//     netMoney:0,
+//     totalSent:0,
+//     transactions:[]
+// }
 
 const addSendTransaction = (state,action) => {
 
@@ -26,6 +26,7 @@ const addSendTransactionFailed = (state,action) => {
 }
 
 const fetchSendTransactions = (state,action) => {
+    console.log(action.transactions)
 
     return updateObject (state,{
         transactions:action.transactions
@@ -40,12 +41,12 @@ const fetchSendTransactionsFailed = (state,action) => {
 
 const addDepositTransaction = (state,action) => {
 
-    const amount = action.mpesa.amount;
+    const amount = action.amount;
     console.log(amount); 
 
     return updateObject(state,{
         transactions: action.mpesa,
-        netMoney: state.netMoney + action.mpesa.amount
+        netMoney: state.netMoney + action.amount.amount
     })
 }
 
@@ -67,7 +68,8 @@ const fetchDepositTransactionsFailed = (state,action) => {
 
 //-------------------------------//
 
-const reducer = (state=initialState,action) => {
+const reducer = (state,action) => {
+    console.log(action)
     switch (action.type) {
         case actionTypes.ADD_SEND_TRANSACTION : 
             return  addSendTransaction(state,action);

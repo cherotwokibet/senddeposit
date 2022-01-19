@@ -68,11 +68,12 @@ const Signup = () => {
             phone:values.phoneNumber,
             password:values.password
         }
+        console.log(values);
 
         registerWithEmailAndPassword(values.name, values.email, values.password)
-            .then(navigate('myaccount'));
+            // .then(navigate('myaccount'));
 
-        // if (user) navigate("/myaccount");
+        if (user) navigate("/myaccount");
 
         console.log(userData)
         // console.log(props)
