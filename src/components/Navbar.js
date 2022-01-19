@@ -1,4 +1,5 @@
 import React from 'react';
+import MyAccount from './MyAccount';
 import {
     Nav,
     NavLink,
@@ -29,7 +30,9 @@ const Navbar = () => {
                 <NavBtn>
                     <NavBtnLink to='/'>Sign Out</NavBtnLink>
                 </NavBtn>
-            </Nav>
+            </Nav> 
+            
+            <MyAccount/>
         </>
     );
 };
