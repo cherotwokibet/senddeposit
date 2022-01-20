@@ -8,9 +8,9 @@ import DepositMoneyTransactions from './components/DepositMoneyTransactions';
 import SendMoney from './components/SendMoney';
 import SendMoneyTransactions from './components/SendMoneyTransactions';
 import MyAccount from './components/MyAccount';
+import Navbar from './components/Navbar';
 
 import { UserProvider } from './UserContext';
-import Navbar from './components/Navbar';
 
 
 function App() {
@@ -21,12 +21,12 @@ function App() {
         <Router>
           <Routes>
             <Route path='/' element={<SignInOutContainer/>}/>
-            <Route path='/nav' element={<Navbar/>}/>
+            <Route path='/home' element={<Navbar/>}/>
             <Route path='/myaccount' element={<MyAccount/>}/>
             <Route path='/sendtrans' element={<SendMoneyTransactions/>}/>
             <Route path='/send' element={<SendMoney/>}/>
             <Route path='/deposit' element={<DepositMoney/>}/>
-            <Route path='/depotrans' element={<DepositMoneyTransactions/>}/>
+            <Route path='/deposittrans' element={<DepositMoneyTransactions/>}/>
             
           </Routes>
         </Router>

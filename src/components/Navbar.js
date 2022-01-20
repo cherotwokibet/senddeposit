@@ -1,5 +1,8 @@
 import React from 'react';
+
+import DepositMoney from './DepositMoney';
 import MyAccount from './MyAccount';
+
 import {
     Nav,
     NavLink,
@@ -8,6 +11,8 @@ import {
     NavBtn,
     NavBtnLink,
 } from './NavbarElements';
+
+
 
 const Navbar = () => {
     return (
@@ -31,8 +36,9 @@ const Navbar = () => {
                     <NavBtnLink to='/'>Sign Out</NavBtnLink>
                 </NavBtn>
             </Nav> 
-            
             <MyAccount/>
+            <DepositMoney/>
+            
         </>
     );
 };

@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import swal from 'sweetalert';
 import { useNavigate } from "react-router-dom";
 import axios from '../axios-base';
+import style from './SendMoney.module.css'
 // import {connect} from 'react-redux'
 
 // import * as actions from '../store/actions/index';
@@ -40,7 +41,7 @@ function SendMoney(props) {
 
     return (
         <section>
-            <h2>Send Money </h2>
+            <h2 className={style.h2} >SEND MONEY </h2>
             <Formik
                 initialValues={{
                     fullName: '',
@@ -48,20 +49,16 @@ function SendMoney(props) {
                     amount:0
                 }}
                 validationSchema={Yup.object({
-                    fullName: Yup.string().required('Required'),
-                    email: Yup.string().email('Invalid email address').required('Required'),
-                    amount: Yup.number().min(1,'Min 1 digit').required('Required')
+                    fullName: Yup.string().required(<span className={style.error_message}>Required</span>),
+                    email: Yup.string().email(<span className={style.error_message}>Invalid email address</span> ).required(<span className={style.error_message}>Required</span>),
+                    amount: Yup.number().min(1,<span className={style.error_message}>Min 1 digit</span> ).required(<span>Required</span>)
                 })}
                 
                 onSubmit={(values, { setSubmitting,resetForm }) => {
-                    console.log(values);
-                    // const formData = JSON.stringify(values, null, 2);
-                    // const formDataObject = JSON.parse(formData);
+                    // console.log(values);
+                    
                     const amountNumber = values.amount;
-                    // console.log(amountNumber);
-
-                    // console.log(amountNumber);
-
+                    
                     if(amountNumber > user.netMoney) {
                         setError(true);
                         return error ? swal('The amount should be less than your TOTAL BALANCE: '+user.netMoney):''
@@ -86,33 +83,35 @@ function SendMoney(props) {
                     }, 400);
                 }}
             >
-                <Form>
+                <Form className={style.form}>
                     
                     <MyTextInput
-                        label="Full Name"
+                        label="Full Name : "
                         name="fullName"
                         type="text"
                         placeholder="Jane Doe"
                     />
+                    <br/>
 
                     <MyTextInput
-                        label="Email Address"
+                        label="Email Address : "
                         name="email"
                         type="email"
                         placeholder="jane@sd.com"
                     />
+                    <br/>
 
                     <MyTextInput
-                        label="Amount"
+                        label="Amount : "
                         name="amount"
                         type= "number"
                     />
-
+                    <br/>
 
                     <button type="submit">Submit</button>
                 </Form>
             </Formik>
-            <button type='button' onClick={()=>navigate('/sendtrans')}>View Transactions </button>
+            <button type='button' onClick={()=>navigate('/sendtrans')} className={style.view}>View Transactions </button>
         </section>
     )
 }

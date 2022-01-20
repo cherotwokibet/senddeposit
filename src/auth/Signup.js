@@ -1,5 +1,5 @@
 import React from 'react'
-import axios from 'axios'
+
 import { 
     Grid, 
     Paper, 
@@ -73,7 +73,7 @@ const Signup = () => {
         registerWithEmailAndPassword(values.name, values.email, values.password)
             // .then(navigate('myaccount'));
 
-        if (user) navigate("/nav");
+        if (user) navigate("/home");
 
         console.log(userData)
         // console.log(props)

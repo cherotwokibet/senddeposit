@@ -1,5 +1,4 @@
 import React,{useContext, useState} from 'react'
-// import PropTypes from 'prop-types'
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 // import {useSelector,useDispatch} from 'react-redux';
@@ -7,7 +6,7 @@ import swal from 'sweetalert'
 import { useNavigate } from "react-router-dom";
 // import {connect} from 'react-redux'
 import axios from '../axios-base';
-
+import style from  './DepositMoney.module.css';
 // import * as actions from '../store/actions/index';
 import { UserContext } from '../UserContext';
 
@@ -37,14 +36,14 @@ function DepositMoney(props) {
 
 
     return (
-        <section>
-            <h2>Deposit Money </h2>
+        <section className='deposit'>
+            <h2 className={style.h2}>DEPOSIT MONEY</h2>
             <Formik
                 initialValues={{
                     amount:0
                 }}
                 validationSchema={Yup.object({
-                    amount: Yup.number().min(1,'Min 1 digit').required('Required')
+                    amount: Yup.number().min(1,<span className={style.error_message}>Min 1 digit</span>).required(<span className={style.error_message}>Required</span>)
                 })}
                 
                 onSubmit={(values, { setSubmitting,resetForm }) => {
@@ -75,22 +74,24 @@ function DepositMoney(props) {
                     }, 400);
                 }}
             >
-                <Form>
+                <Form className={style.form}>
 
                     <MyTextInput
-                        label="MPESA"
+                        label= "Mpesa : "
                         name="amount"
                         type= "number"
                     />
+                    <br/>
 
-
-                    <button type="submit" >Submit</button>
+                    <button type="submit" className={style.button} >Submit</button>
+                    <br/>
                 </Form>
             </Formik>
-            <button type='button' onClick={()=>navigate('/depotrans')}>View Transactions</button>
+            <button type='button' className={style.view} onClick={()=>navigate('/depotrans')}>Transactions</button>
         </section>
     )
 }
+
 
 
 // const mapDispatchToProps = dispatch => {

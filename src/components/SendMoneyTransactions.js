@@ -3,7 +3,7 @@ import React, { useContext, useEffect,useState } from 'react'
 // import {connect} from 'react-redux'
 import { UserContext } from '../UserContext';
 import axios from '../axios-base';
-
+import './SendMoneyTransactions.css'
 
 function SendMoneyTransactions(props) {
 
@@ -29,8 +29,8 @@ function SendMoneyTransactions(props) {
     return (
         
         <section className='transactions'>
-            <h4 className='align-left'>Send Transactions</h4>
-                <ul>
+            <h4 className='h4'>Send Transactions</h4>
+                <ul className='border'>
                     {trans && trans.map((transaction,index) => (
                         <li key={index}>
                             <span className='align-left'>
