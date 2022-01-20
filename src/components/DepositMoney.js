@@ -87,7 +87,7 @@ function DepositMoney(props) {
                     <br/>
                 </Form>
             </Formik>
-            <button type='button' className={style.view} onClick={()=>navigate('/depotrans')}>Transactions</button>
+            <button type='button' className={style.view} onClick={()=>navigate('/deposittrans')}>Transactions</button>
         </section>
     )
 }
