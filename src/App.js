@@ -11,6 +11,7 @@ import MyAccount from './components/MyAccount';
 import Navbar from './components/Navbar';
 
 import { UserProvider } from './UserContext';
+import BootstrapNavbar from './components/BootstrapNavbar';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path='/send' element={<SendMoney/>}/>
             <Route path='/deposit' element={<DepositMoney/>}/>
             <Route path='/deposittrans' element={<DepositMoneyTransactions/>}/>
+            <Route path='/boot' element={<BootstrapNavbar/>}/>
             
           </Routes>
         </Router>
