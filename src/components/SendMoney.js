@@ -111,7 +111,7 @@ function SendMoney(props) {
                     <button type="submit">Submit</button>
                 </Form>
             </Formik>
-            <button type='button' onClick={()=>navigate('/sendtrans')} className={style.view}>View Transactions </button>
+            <button type='button' onClick={()=>navigate('/sendtrans')} className={style.view}> Transactions </button>
         </section>
     )
 }

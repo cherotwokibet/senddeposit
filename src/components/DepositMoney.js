@@ -1,5 +1,6 @@
 import React,{useContext, useState} from 'react'
-import { Formik, Form, useField } from 'formik';
+import { Grid,Paper, Avatar, TextField, Button, Typography,Link, Box } from '@mui/material'
+import { Formik, Form, Field,useField } from 'formik';
 import * as Yup from 'yup';
 // import {useSelector,useDispatch} from 'react-redux';
 import swal from 'sweetalert'
@@ -36,8 +37,12 @@ function DepositMoney(props) {
 
 
     return (
-        <section className='deposit'>
-            <h2 className={style.h2}>DEPOSIT MONEY</h2>
+
+        <Grid>
+            <Paper elevation={0}>
+                <Grid>
+                    <h4 className={style.h4}>DEPOSIT MONEY</h4>
+                </Grid>
             <Formik
                 initialValues={{
                     amount:0
@@ -75,20 +80,29 @@ function DepositMoney(props) {
                 }}
             >
                 <Form className={style.form}>
+                    <Grid marginBottom={2}>
+                        {/* <Field as={TextField}
+                            label = 'Mpesa'
+                            name = 'amount'
+                            type = 'number'
+                        /> */}
 
-                    <MyTextInput
-                        label= "Mpesa : "
-                        name="amount"
-                        type= "number"
-                    />
+                        <MyTextInput 
+                            label= "Mpesa : "
+                            name="amount"
+                            type= "number"
+                        />
+                    </Grid>
+
                     <br/>
 
                     <button type="submit" className={style.button} >Submit</button>
                     <br/>
                 </Form>
             </Formik>
-            <button type='button' className={style.view} onClick={()=>navigate('/deposittrans')}>Transactions</button>
-        </section>
+                <button type='button' className={style.view} onClick={()=>navigate('/deposittrans')}>Transactions</button>
+            </Paper>
+        </Grid>
     )
 }
 

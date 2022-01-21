@@ -46,7 +46,7 @@
 .h2 { 
     color: #023038; 
     font-family: 'Trocchi', serif; 
-    font-size: 45px; 
+    font-size: 30px; 
     font-weight: bold; 
     line-height: 48px; 
     margin: 5%; 
@@ -55,6 +55,7 @@
 .view {
     width: 25%;
     padding: 15px;
+    padding-left: 10px;
     border: 0px;
     border-radius: 30px;
     font-size: 16px;
