@@ -16,7 +16,7 @@ function MyAccount(props) {
         <section>
             <h2 className={style.h2}>MY ACCOUNT</h2>
             <div className={style.information}>
-                <span>
+                <span className={style.txt}>
                     Ksh: {value.totalSent} 
                         <br/>
                     Total Sent
@@ -24,7 +24,7 @@ function MyAccount(props) {
                 <span>
                     <DonutChart percentage={Math.floor(value.netMoney/value.grossMoney)*100}/>
                 </span>
-                <span>
+                <span className={style.txt}>
                     Ksh: {value.netMoney} 
                         <br/>
                     Net Money

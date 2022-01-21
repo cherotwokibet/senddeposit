@@ -34,3 +34,8 @@
     line-height: 48px; 
     margin: 5%; 
 }
+
+.txt {
+    font-size: medium;
+    font-weight: bold;
+}

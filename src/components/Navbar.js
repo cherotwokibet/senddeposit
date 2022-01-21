@@ -21,13 +21,13 @@ const Navbar = () => {
                 <Bars />
 
                 <NavMenu>
-                    <NavLink to='/myaccount' activeStyle>
+                    <NavLink to='/myaccount' >
                         Account
                     </NavLink>
-                    <NavLink to='/deposit' activeStyle>
+                    <NavLink to='/deposit' >
                         Deposit
                     </NavLink>
-                    <NavLink to='/send' activeStyle>
+                    <NavLink to='/send' >
                         Send Money
                     </NavLink>
                     
