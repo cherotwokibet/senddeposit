@@ -2,38 +2,69 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import './App.css';
-import SignInOutContainer from './auth';
-import DepositMoney from './components/DepositMoney';
-import DepositMoneyTransactions from './components/DepositMoneyTransactions';
-import SendMoney from './components/SendMoney';
-import SendMoneyTransactions from './components/SendMoneyTransactions';
-import MyAccount from './components/MyAccount';
-import Navbar from './components/Navbar';
 
-import { UserProvider } from './UserContext';
-import BootstrapNavbar from './components/BootstrapNavbar';
+import SendMoney from './pages/SendMoney'
+import Deposit from './pages/Deposit'
+import MyAccount from './pages/MyAccount';
+import Layout from './components/Layout';
+import Transactions from './pages/Transactions';
+import SignUp from './auth/Signup';
+import Login from './auth/Login'
+import ForgotPassword from './auth/ForgotPassword'
+import { UserProvider } from './contexts/UserContext';
+import PrivateRoute from './components/PrivateRoute';
 
 
 function App() {
     
   return (
     <UserProvider>
-      <div className="App">
+      <div className='App'>
         <Router>
-          <Routes>
-            <Route path='/' element={<SignInOutContainer/>}/>
-            <Route path='/home' element={<Navbar/>}/>
-            <Route path='/myaccount' element={<MyAccount/>}/>
-            <Route path='/sendtrans' element={<SendMoneyTransactions/>}/>
-            <Route path='/send' element={<SendMoney/>}/>
-            <Route path='/deposit' element={<DepositMoney/>}/>
-            <Route path='/deposittrans' element={<DepositMoneyTransactions/>}/>
-            <Route path='/boot' element={<BootstrapNavbar/>}/>
-            
-          </Routes>
+          <Layout>
+            <Routes>
+              <Route
+                path='/'
+                element={
+                  <PrivateRoute>
+                    <MyAccount/>
+                  </PrivateRoute>
+                }  
+              />
+              <Route
+                path='/send'
+                element={
+                  <PrivateRoute>
+                    <SendMoney />
+                  </PrivateRoute>
+                }  
+              />
+              <Route
+                path='/deposit'
+                element={
+                  <PrivateRoute>
+                    <Deposit />
+                  </PrivateRoute>
+                }  
+              />
+              <Route
+                path='/transactions'
+                element={
+                  <PrivateRoute>
+                    <Transactions />
+                  </PrivateRoute>
+                }  
+              />
+              <Route path='/signup' element={<SignUp />}/>
+              <Route path='/login' element={<Login/>}/>
+              <Route path='/forgot' element={<ForgotPassword/>}/>
+            </Routes>
+          </Layout>
         </Router>
+
       </div>
     </UserProvider>
+    
   );
 }
 

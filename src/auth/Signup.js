@@ -1,154 +1,284 @@
-import React from 'react'
+import React,{useState} from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
-import { 
-    Grid, 
-    Paper, 
-    Avatar, 
-    Typography, 
-    TextField, 
-    Button 
-} from '@mui/material'
-
-import { AddCircleOutlineOutlined as AddCircleOutlineOutlinedIcon} from '@mui/icons-material'
 import {
-    Radio, 
-    RadioGroup,
+    Avatar,
+    Button,
+    CssBaseline,
+    TextField,
     FormControl,
-    FormControlLabel,
     FormLabel,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
     Checkbox,
-    FormHelperText
+    Link,
+    Grid,
+    Box,
+    Typography,
+    Container,
+    Alert
 } from '@mui/material'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
-import * as Yup from 'yup'
+import {LockOutlined } from '@mui/icons-material'
 
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useNavigate } from "react-router-dom";
-import {
-    auth,
-    registerWithEmailAndPassword,
-  } from "../firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth"
 
-const Signup = () => {
+import { setDoc ,doc } from "firebase/firestore";
 
-    const paperStyle = { padding: 20, width: 300, margin: "0 auto" }
-    const headerStyle = { margin: 0 }
-    const avatarStyle = { backgroundColor: '#1bbd7e' }
-    const marginTop = { marginTop: 5 }
 
-    
-    const initialValues = {
-        name: '',
-        email: '',
-        gender: '',
-        phoneNumber: '',
-        password: '',
-        confirmPassword: '',
-        termsAndConditions: false
-    }
-    
-    const validationSchema = Yup.object().shape({
-        name: Yup.string().min(3, "It's too short").required("Required"),
-        email: Yup.string().email("Enter valid email").required("Required"),
-        gender: Yup.string().oneOf(["male", "female"], "Required").required("Required"),
-        phoneNumber: Yup.number().typeError("Enter valid Phone Number").required('Required'),
-        password: Yup.string().min(8, "Password minimum length should be 8").required("Required"),
-        confirmPassword: Yup.string().oneOf([Yup.ref('password')], "Password not matched").required("Required"),
-        termsAndConditions: Yup.string().oneOf(["true"], "Accept terms & conditions")
-    });
+import { useNavigate } from 'react-router-dom';
+import { auth,db } from '../firebaseConfig';
 
-    const [user] = useAuthState(auth);
-    const navigate = useNavigate();
 
-    const onSubmit = async (values, props) => {
+export default function SignUp() {
 
-        const userData = {
-            name: values.name,
-            email:values.email,
-            phone:values.phoneNumber,
-            password:values.password
+    const [error,setError] = useState('')
+    const [loading,setLoading] = useState(false)
+    const [gender,setGender] = useState('male')
+    const [acceptTerms,setAcceptTerms] = useState(false)
+
+    // const {signup} = useAuth()
+    const navigate = useNavigate()
+
+    const formik = useFormik({
+        initialValues : {
+            firstName:'',
+            lastName:'',
+            phone:'', 
+            email: '',
+            password:'',
+            passwordConfirm:'' 
+        },
+        validationSchema : Yup.object({
+            firstName: Yup.string().required('Required'),
+            lastName: Yup.string().required('Required'),
+            phone: Yup.string().required('Required'),
+            email: Yup.string().email('Invalid email address').required('Required'),
+            password: Yup.string().required('No password provided.').min(8, 'Password is too short - should be 8 chars minimum.'),
+            passwordConfirm: Yup.string().required('No password provided.').min(8, 'Password is too short - should be 8 chars minimum.')
+        }),
+        onSubmit : (values, { resetForm,setSubmitting }) => {
+
+            setError('')
+
+            setLoading(true)
+
+            if(values.password !== values.passwordConfirm) {
+                window.scrollTo(0,0)
+                return setError('Passwords do not match')
+            }
+
+            createUserWithEmailAndPassword(auth, values.email, values.password)
+                .then(user => {
+                    // console.log(user.user.uid)
+                    const userId =user.user.uid
+                    setDoc(doc(db, "users",userId), {
+                        userId,
+                        name:`${values.firstName} ${values.lastName}`,
+                        gender:gender,
+                        email:values.email,
+                        phone:values.phone
+                    });
+                    setDoc(doc(db, "money",userId), {
+                        userId,
+                        netMoney:50000,
+                        totalSent:0
+                    });
+                    
+                    // console.log(user)
+                })
+                .catch((err) => {
+                    if(err.code === 'auth/user-not-found') {
+                        setError('User does not exist')
+                    }
+                    if(err.code === 'auth/wrong-password') {
+                        setError('Wrong Password')
+                    }
+                    if(err.code === 'auth/email-already-in-use') {
+                        setError('User Exists, Login Instead')
+                    }
+                    
+                    console.log(err.code)
+                    setError(err.code)
+                })
+                .finally(()=>{
+                    
+                    window.scrollTo(0,0)
+                    setTimeout(()=>{
+                        setLoading(false)
+                        setSubmitting(false)
+                        resetForm()
+                        navigate('/')
+                    },500)
+            })
+            
+
         }
-        console.log(values);
+    })
 
-        registerWithEmailAndPassword(values.name, values.email, values.password)
-            // .then(navigate('myaccount'));
 
-        if (user) navigate("/home");
-
-        console.log(userData)
-        // console.log(props)
-        setTimeout(() => {
-            props.resetForm()
-            props.setSubmitting(false)
-        }, 2000)
-    }
     return (
-        <Grid>
-            <Paper style={paperStyle}>
-                <Grid align='center'>
-                    <Avatar style={avatarStyle}>
-                        <AddCircleOutlineOutlinedIcon />
-                    </Avatar>
-                    <h2 style={headerStyle}>Sign Up</h2>
-                    <Typography variant='caption' gutterBottom>Please fill this form to create an account !</Typography>
-                </Grid>
-                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-                    {(props) => (
-                        <Form>
-                            <Grid marginTop={2} marginBottom={2}>
-                                <Field as={TextField} fullWidth name="name" label='Name'
-                                    placeholder="Enter your name" helperText={<ErrorMessage name="name" />} 
-                                />
-                            </Grid>
-                            <Grid marginTop={2}>
-                                <Field as={TextField} fullWidth name="email" label='Email'
-                                    placeholder="Enter your email" helperText={<ErrorMessage name="email" />} 
-                                />
-                            </Grid>
-                            
-                            <FormControl component="fieldset" style={marginTop}>
-                                <FormLabel component="legend">Gender</FormLabel>
-                                < Field as={RadioGroup} aria-label="gender" name="gender" style={{ display: 'initial' }}>
-                                    <FormControlLabel value="female" control={<Radio />} label="Female" />
-                                    <FormControlLabel value="male" control={<Radio />} label="Male" />
-                                </ Field>
-                            </FormControl>    
-                            
-                            <FormHelperText><ErrorMessage name="gender" /></FormHelperText>
-
-                            <Grid marginTop={2}>
-                                <Field as={TextField} fullWidth name="phoneNumber" label='Phone Number'
-                                    placeholder="Enter your phone number" helperText={<ErrorMessage name="phoneNumber" />} 
-                                />
-                            </Grid>
-
-                            <Grid marginTop={2}>
-                                <Field as={TextField} fullWidth name='password' type="password"
-                                    label='Password' placeholder="Enter your password"
-                                    helperText={<ErrorMessage name="password" />} 
-                                />
-                            </Grid>
-                            <Grid marginTop={2}>
-                                <Field as={TextField} fullWidth name="confirmPassword" type="password"
-                                    label='Confirm Password' placeholder="Confirm your password"
-                                    helperText={<ErrorMessage name="confirmPassword" />} 
-                                />
-                            </Grid>
-
-                            <FormControlLabel
-                                control={<Field as={Checkbox} name="termsAndConditions" />}
-                                label="I accept the terms and conditions."
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <Box
+                sx={{
+                    marginTop: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                    <LockOutlined />
+                </Avatar>
+            
+                <Typography component="h1" variant="h5">
+                    Sign up
+                </Typography>
+                { error && <Alert severity='error'>{error}</Alert>}
+                <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                // autoComplete="given-name"
+                                name="firstName"
+                                autoFocus
+                                required
+                                fullWidth
+                                id="firstName"
+                                label="First Name"
+                                {...formik.getFieldProps('firstName')}
                             />
-                            <FormHelperText><ErrorMessage name="termsAndConditions" /></FormHelperText>
-                            <Button type='submit' variant='contained' disabled={props.isSubmitting}
-                                color='primary'>{props.isSubmitting ? "Loading" : "Sign up"}</Button>
+                            {formik.touched.firstName && formik.errors.firstName ? (
+                                <Alert severity='error' sx={{color:'red',background:'inherit'}}>{formik.errors.firstName}</Alert>
+                            ) : null}
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                fullWidth
+                                id="lastName"
+                                label="Last Name"
+                                name="lastName"
+                                {...formik.getFieldProps('lastName')}
+                            />
+                            {formik.touched.lastName && formik.errors.lastName ? (
+                                <Alert severity='error' sx={{color:'red',background:'inherit'}}>{formik.errors.lastName}</Alert>
+                            ) : null}
+                        </Grid>
 
-                        </Form>
-                    )}
-                </Formik>
-            </Paper>
-        </Grid>
-    )
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                id="phone"
+                                label="Phone"
+                                name="phone"
+                                {...formik.getFieldProps('phone')}
+                            />
+                            {formik.touched.phone && formik.errors.phone ? (
+                                <Alert severity='error' sx={{color:'red',background:'inherit'}}>{formik.errors.phone}</Alert>
+                            ) : null}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                {...formik.getFieldProps('email')}
+                                
+                            />
+                            {formik.touched.email && formik.errors.email ? (
+                                <Alert severity='error' sx={{color:'red',background:'inherit'}}>{formik.errors.email}</Alert>
+                            ) : null}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                {...formik.getFieldProps('password')}
+                            />
+                            {formik.touched.password && formik.errors.password ? (
+                                <Alert severity='error' sx={{color:'red',background:'inherit'}}>{formik.errors.password}</Alert>
+                            ) : null}
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                required
+                                fullWidth
+                                name="passwordConfirm"
+                                label="Confirm Password"
+                                type="password"
+                                id="passwordConfirm"
+                                {...formik.getFieldProps('passwordConfirm')}  
+                            />
+                            {formik.touched.passwordConfirm && formik.errors.passwordConfirm ? (
+                                <Alert severity='error' sx={{color:'red',background:'inherit'}}>{formik.errors.passwordConfirm}</Alert>
+                            ) : null}
+
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <FormControl sx={{
+                                    marginTop:'20px',
+                                    marginBottom:'5px',
+                                    display:'block'
+                                }}
+                            >
+                                
+                                <FormLabel sx={{
+                                    '&.Mui-focused':{color:'#666666'},
+                                    }} 
+                                > 
+                                    Gender 
+                                </FormLabel>
+
+                                <RadioGroup 
+                                    value={gender} 
+                                    onChange={(e)=> setGender(e.target.value)}
+                                >
+                                    <FormControlLabel value='male' control={<Radio color='secondary' />} label='Male' />
+                                    <FormControlLabel value='female' control={<Radio color='secondary'/>} label='Female' />
+                                    
+                                </RadioGroup>
+                            </FormControl>
+
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                // value={acceptTerms}
+                                control={<Checkbox defaultChecked value={acceptTerms} color="primary" onChange={(e) => setAcceptTerms(!acceptTerms)} />}
+                                label="Recieve regular updates and promotions."
+                            />
+                            {acceptTerms && <Alert severity='warning' sx={{color:'#ff5c00',background:'inherit'}}>You won't recieve updates</Alert>}
+                        </Grid>
+                    </Grid>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        color='secondary'
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                    >
+                        Sign Up
+                    </Button>
+                    <Grid container justifyContent="flex-end">
+                        <Grid item>
+                        <Link href="/login" variant="body2">
+                            Already have an account? Sign in
+                        </Link>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Box>
+        </Container>   
+    );
 }
-
-export default Signup;

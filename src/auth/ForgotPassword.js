@@ -1,8 +1,8 @@
-import React,{useState} from 'react';
+
+import React, {useState} from 'react'
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import {useNavigate} from 'react-router-dom';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 
 
 import {
@@ -10,8 +10,6 @@ import {
     Button,
     CssBaseline,
     TextField,
-    FormControlLabel,
-    Checkbox,
     Link,
     Grid,
     Box,
@@ -25,34 +23,31 @@ import { auth } from '../firebaseConfig';
 
 
 
-export default function Login() {
 
+export default function ForgotPassword() {
+    
     const [error,setError] = useState()
     const [loading,setLoading] = useState(false)
-   
-    const navigate = useNavigate();
-    
-    
+    const [message,setMessage] = useState()
+  
 
+    
     const formik = useFormik({
         initialValues : { 
-            email: '',
-            password:'' 
+            email: ''
         },
         validationSchema : Yup.object({
-            email: Yup.string().email('Invalid email address').required('Required'),
-            password: Yup.string().required('No password provided.').min(8, 'Password is too short - should be 8 chars minimum.')
+            email: Yup.string().email('Invalid email address').required('Required')
         }),
         onSubmit : (values, { resetForm,setSubmitting }) => {
 
+            setMessage('')
             setError('')
             setLoading(true)
 
-
-            signInWithEmailAndPassword(auth, values.email, values.password)
-                .then(user => {
-                    // console.log(user)
-                    // navigate('/')
+            sendPasswordResetEmail(auth, values.email)
+                .then(() => {
+                    setMessage('Check your inbox for further instructions')
                 })
                 .catch((err) => {
                     if(err.code === 'auth/user-not-found') {
@@ -61,19 +56,23 @@ export default function Login() {
                     if(err.code === 'auth/wrong-password') {
                         setError('Wrong Password')
                     }
+                    setError('Failed to reset password')
                     console.log(err.code)
                 })
                 .finally(()=>{
+                    setLoading(false)
                     setTimeout(()=>{
-                        setLoading(false)
                         setSubmitting(false)
                         resetForm()
-                        navigate('/')
-                    },500)
+                    },1000)
             })
+
+
+
         }
     })
 
+    
     return (
         
         <Container component="main" maxWidth="xs">
@@ -90,43 +89,27 @@ export default function Login() {
                 <LockOutlined />
             </Avatar>
             <Typography component="h1" variant="h5">
-                Sign in
+                Password Reset
             </Typography>
             { error && <Alert severity='error' sx={{color:'red',background:'inherit'}}>{error}</Alert>}
+            { message && <Alert severity='success' sx={{color:'green',background:'inherit'}}>{message}</Alert>}
             
             <Box component="form" noValidate sx={{ mt: 1 }}  onSubmit={formik.handleSubmit} >
+
                 <TextField
                     margin="normal"
-                    // required
+                    required
                     fullWidth
                     id="email"
                     label="Email Address"
                     name="email"
-                    // autoFocus
+                    autoFocus
                     {...formik.getFieldProps('email')}
                 />
                 {formik.touched.email && formik.errors.email ? (
                     <Alert severity='error' sx={{color:'red',background:'inherit'}}>{formik.errors.email}</Alert>
                 ) : null}
 
-                <TextField
-                    margin="normal"
-                    // required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    {...formik.getFieldProps('password')}
-                />
-                {formik.touched.password && formik.errors.password ? (
-                    <Alert severity='error' sx={{color:'red',background:'inherit'}}>{formik.errors.password}</Alert>
-                ) : null}
-                
-                <FormControlLabel
-                    control={<Checkbox value="remember" color="primary" />}
-                    label="Remember me"
-                />
                 <Button
                     type="submit"
                     fullWidth
@@ -135,25 +118,21 @@ export default function Login() {
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                 >
-                    Sign In
+                    Reset Password
                 </Button>
-                <Grid container>
-                    <Grid item xs>
-                        <Link href="/forgot" variant="body2" >
-                            Forgot password?
+                <Grid container justifyContent='center' alignItems='center'  >
+                    <Grid item >
+                        <Link href="/login" variant="body2" sx={{fontSize:20}} >
+                            Login
                         </Link>
                     </Grid>
-                    <Grid item>
-                        <Link href="/signup" variant="body2">
-                            {"Don't have an account? Sign Up"}
-                        </Link>
-                    </Grid>
+                
                 </Grid>
             </Box>
 
             
             </Box>
         </Container>
-
-    );
+        
+    )
 }
